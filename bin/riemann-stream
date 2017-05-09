@@ -22,6 +22,7 @@ program
   .option('-q, --query <url>', 'Riemann query to subscribe to [true]', 'true')
   .option('-h --host <host>', 'optional host')
   .option('-p --port <port>', 'optional port [5556]', 5556)
+  .option('-f --format <format>', 'optional format [plain]', 'plain')
   .parse(process.argv);
 
 /* Determine host. Precedence
@@ -32,20 +33,24 @@ program
 host = program.host || process.env.RIEMANN_HOST || 'localhost'
 url = 'ws://' + host + ':' + program.port + '/index?subscribe=true&query=' + encodeURI(program.query)
 
-console.log("Riemann query: " + program.query);
-console.log("Connecting to: " + url);
+console.warn("Riemann query: " + program.query);
+console.warn("Connecting to: " + url);
 
 var ws = new WebSocket(url);
 
 ws.on('open', function open() {
-  console.log('connected (press Ctrl+C to quit');
+  console.warn('connected (press Ctrl+C to quit');
 }).on('close', function close() {
-  console.log('disconnected');
+  console.warn('disconnected');
   process.exit();
 }).on('error', function error(code, description) {
   console.error('error: ' + code + (description ? ' ' + description : ''));
   process.exit(-1);
 }).on('message', function message(data, flags) {
-  console.log(prettyjson.render(JSON.parse(data)));
+  if (program.format == 'json') {
+    console.log(data);
+  } else {
+    console.log(prettyjson.render(JSON.parse(data)));
+  }
   console.log();
 });
