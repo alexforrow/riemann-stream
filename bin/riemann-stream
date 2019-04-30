@@ -19,7 +19,7 @@ var version = require('../package.json').version;
 program
   .version(version)
   .usage('[options] <url>')  
-  .option('-q, --query <url>', 'Riemann query to subscribe to [true]', 'true')
+  .option('-q, --query <query>', 'Riemann query to subscribe to [true]', 'true')
   .option('-h --host <host>', 'optional host')
   .option('-p --port <port>', 'optional port [5556]', 5556)
   .option('-f --format <format>', 'optional format [plain]', 'plain')
